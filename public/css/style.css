@@ -1,0 +1,12 @@
+body{
+    background-image: url("../images/newspapers.jpg");
+    
+}
+.main-title-container{
+    width: 100%;
+}
+.main-title{
+    width: 500px;
+    margin: auto;
+
+}
