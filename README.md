@@ -1,2 +1,2 @@
 # news-scrapper
-News Scrapper Homework using Cheerios and MongoDB
+News Scraper Homework using Cheerio and MongoDB

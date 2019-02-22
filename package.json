@@ -1,0 +1,27 @@
+{
+  "name": "news-scrapper",
+  "version": "1.0.0",
+  "description": "Scrape News using Cheerio and MongoDB",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agarcia261/news-scrapper.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/agarcia261/news-scrapper/issues"
+  },
+  "homepage": "https://github.com/agarcia261/news-scrapper#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "cheerio": "^1.0.0-rc.2",
+    "express": "^4.16.4",
+    "express-handlebars": "^3.0.1",
+    "mongoose": "^5.4.14"
+  }
+}
