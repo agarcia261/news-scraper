@@ -108,3 +108,4 @@ $(".delete-article").on("click", function(event){
       }
     );
 })
+

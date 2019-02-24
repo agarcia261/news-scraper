@@ -14,8 +14,13 @@ module.exports = function(app) {
 app.get('/', function (req, res) {
     db.Article.find({saved:false})
     .then(function(data) {
+        console.log(data.length)
         if (data){        
-            res.render('index', {data});
+            res.render('index', {
+                data, 
+                index:true,
+                length:data.length
+            });
         }
         else{
             res.render('index')
@@ -163,7 +168,9 @@ app.get('/', function (req, res) {
     db.Article.find({ saved: true })
     .then(function(data) {
         if (data){        
-            res.render('index', {data});
+            res.render('index', {
+                data,
+                modalstatus:false});
         }
         else{
             res.render('index')

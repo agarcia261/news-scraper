@@ -26,6 +26,16 @@
       </div>
     </div>
     {{/each}}
+    {{#if index}}
+        {{> modalindex}}
+    {{/if}}
+    {{#if modalnotes}}
+        {{> modalnotes}}
+    {{/if}}
+
 {{else}}
     <div id="articles"></div>
 {{/if}}
+
+
+
