@@ -1,6 +1,5 @@
 body{
-    background-image: url("../images/newspapers.jpg");
-    
+    background-image: url("../images/newspapers.jpg");    
 }
 .main-title-container{
     width: 100%;
@@ -9,4 +8,7 @@ body{
     width: 500px;
     margin: auto;
 
+}
+.margin-left-5{
+    margin-left: 5px;
 }

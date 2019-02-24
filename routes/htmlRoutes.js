@@ -12,42 +12,78 @@ var cheerio = require("cheerio");
 module.exports = function(app) {
 
 app.get('/', function (req, res) {
-    res.render('index');
-  });
+    db.Article.find({saved:false})
+    .then(function(data) {
+        if (data){        
+            res.render('index', {data});
+        }
+        else{
+            res.render('index')
+        }
+    });
+});
+
   // A GET route for scraping the echoJS website
   app.get("/scrape", function(req, res) {
+    db.Article.deleteMany({ saved: false }, function (err) {
+        if (err) return handleError(err);
+        // deleted at most one tank document
+      });
     // First, we grab the body of the html with axios
-    axios.get("http://www.echojs.com/").then(function(response) {
+    axios.get("https://www.nytimes.com").then(function(response) {
+        console.log("test")
       // Then, we load that into cheerio and save it to $ for a shorthand selector
       var $ = cheerio.load(response.data);
   
       // Now, we grab every h2 within an article tag, and do the following:
-      $("article h2").each(function(i, element) {
+      $(".css-8atqhb").each(function(i, element) {
         // Save an empty result object
         var result = {};
+        // console.log(element)
   
         // Add the text and href of every link, and save them as properties of the result object
-        result.title = $(this)
-          .children("a")
-          .text();
-        result.link = $(this)
-          .children("a")
-          .attr("href");
+        result.title = $(this).find($('.esl82me2')).text()
+        // $(element).children().text();
+        // $(this)
+        // .attr("class","esl82me2")
+
+        // //   .children("a")
+        //   .text();
+        if($(this).find($('.e1n8kpyg1')).children().text()){
+            result.summary = $(this).find($('.e1n8kpyg1')).children().text()
+
+        }
+        else{
+            result.summary = "No summary available for this subject"
+        }
+        //   .children()
+        //   .children("li")
+          
+        result.link = "https://www.nytimes.com"+$(element).find("a").attr("href");
+        // "www.nytimes.com"+$(this)
+        // .parent()
+        // .attr("href");
+        // console.log(result)
+
   
         // Create a new Article using the `result` object built from scraping
         db.Article.create(result)
           .then(function(dbArticle) {
-            // View the added result in the console
-            console.log(dbArticle);
+                          // View the added result in the console
+            //console.log(dbArticle);
+            // res.render('articles',dbArticle);
+
+
           })
           .catch(function(err) {
             // If an error occurred, log it
             console.log(err);
           });
       });
+      res.status(200).send("OK");
+
   
       // Send a message to the client
-      res.send("Scrape Complete");
     });
   });
   
@@ -99,5 +135,39 @@ app.get('/', function (req, res) {
         // If an error occurred, send it to the client
         res.json(err);
       });
+  });
+  app.put("/article", function(req, res) {
+    db.Article.update({_id:req.body.id}, {$set: { saved: true }}
+    ).then(function(response) {
+        return db.Article.deleteMany({ saved: false });
+    })
+    .then(function (response){
+
+        res.status(200).send(req.body.id);
+    })
+    .catch(function(err) {
+        // If an error occurred, send it to the client
+        res.json(err);
+      });
+  });
+  app.delete("/article/:id", function(req, res) {
+
+    db.Article.deleteOne({_id:req.params.id},function (err) {
+      if (err){
+        return res.status(404).end();
+      }
+      return res.status(200).end();
+    });
+  });
+  app.get("/myarticles", function(req, res) {
+    db.Article.find({ saved: true })
+    .then(function(data) {
+        if (data){        
+            res.render('index', {data});
+        }
+        else{
+            res.render('index')
+        }
+    });
   });
 }
