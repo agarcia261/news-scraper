@@ -5,7 +5,6 @@ $(document).on("click", ".scrape-site", () => {
     url: "/scrape",
   })
   .then((data) => {
-    console.log(data)
     if (data ==="OK"){
       window.location.assign("/");
     }
@@ -38,18 +37,24 @@ $(".delete-article").on("click", function(event){
 })
 $(".add-comment").on("click", function(event){
   const articleID = $(this).attr("article-id")
+  body = $( "[comment-id="+articleID+"]" ).val()
 
+  if (body){
     $.ajax({
     method: "POST",
     url: "/notes/" + articleID,
     data: {
-      body: $( "[comment-id="+articleID+"]" ).val()
+      body: body
     }
   })
     // With that done
     .then(function(data) {
       location.reload();
     });
+  }
+  else{
+    console.log("Cannot submit empty value")
+  }
 })
 $(".delete-comment").on("click", function(event){
   console.log(this.id)
