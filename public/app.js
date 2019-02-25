@@ -98,7 +98,7 @@ $(document).on("click", ".save-news", function (event) {
 })
 $(".delete-article").on("click", function(event){
   // Send the DELETE request.
-  $.ajax("/article/" + this.id, {
+  $.ajax("/article/" + $(this).attr("del-id"), {
       type: "DELETE"
     })
     .done(
@@ -107,5 +107,39 @@ $(".delete-article").on("click", function(event){
         location.reload();
       }
     );
+})
+$(".add-comment").on("click", function(event){
+  const articleID = $(this).attr("article-id")
+
+    $.ajax({
+    method: "POST",
+    url: "/notes/" + articleID,
+    data: {
+      // Value taken from title input
+      // title: $("#titleinput").val(),
+      // Value taken from note textarea
+      body: $( "[comment-id="+articleID+"]" ).val()
+    }
+  })
+    // With that done
+    .then(function(data) {
+      location.reload();
+      // Log the response
+      // console.log(data);
+      // Empty the notes section
+      // $("#notes").empty();
+    });
+})
+$(".delete-comment").on("click", function(event){
+  console.log(this.id)
+  $.ajax("/note/" + this.id, {
+    type: "DELETE"
+  })
+  .done(
+    function() {
+      // Reload the page to get the updated list
+      location.reload();
+    }
+  );
 })
 
