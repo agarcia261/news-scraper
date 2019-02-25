@@ -14,7 +14,6 @@ module.exports = function(app) {
 app.get('/', function (req, res) {
     db.Article.find({saved:false})
     .then(function(data) {
-        console.log(data.length)
         if (data){        
             res.render('index', {
                 data, 
@@ -36,24 +35,16 @@ app.get('/', function (req, res) {
       });
     // First, we grab the body of the html with axios
     axios.get("https://www.nytimes.com").then(function(response) {
-        console.log("test")
       // Then, we load that into cheerio and save it to $ for a shorthand selector
       var $ = cheerio.load(response.data);
   
       // Now, we grab every h2 within an article tag, and do the following:
       $(".css-8atqhb").each(function(i, element) {
         // Save an empty result object
-        var result = {};
-        // console.log(element)
-  
+        var result = {};  
         // Add the text and href of every link, and save them as properties of the result object
         result.title = $(this).find($('.esl82me2')).text()
-        // $(element).children().text();
-        // $(this)
-        // .attr("class","esl82me2")
 
-        // //   .children("a")
-        //   .text();
         if($(this).find($('.e1n8kpyg1')).children().text()){
             result.summary = $(this).find($('.e1n8kpyg1')).children().text()
 
@@ -61,24 +52,12 @@ app.get('/', function (req, res) {
         else{
             result.summary = "No summary available for this subject"
         }
-        //   .children()
-        //   .children("li")
           
         result.link = "https://www.nytimes.com"+$(element).find("a").attr("href");
-        // "www.nytimes.com"+$(this)
-        // .parent()
-        // .attr("href");
-        // console.log(result)
-
   
         // Create a new Article using the `result` object built from scraping
         db.Article.create(result)
           .then(function(dbArticle) {
-                          // View the added result in the console
-            //console.log(dbArticle);
-            // res.render('articles',dbArticle);
-
-
           })
           .catch(function(err) {
             // If an error occurred, log it
@@ -86,9 +65,6 @@ app.get('/', function (req, res) {
           });
       });
       res.status(200).send("OK");
-
-  
-      // Send a message to the client
     });
   });
   
@@ -124,7 +100,6 @@ app.get('/', function (req, res) {
   
   // Route for saving/updating an Article's associated Note
   app.post("/notes/:id", function(req, res) {
-      console.log(req.body)
     // Create a new note and pass the req.body to the entry
     db.Note.create(req.body)
       .then(function(dbNote) {
@@ -169,7 +144,6 @@ app.get('/', function (req, res) {
     db.Article.find({ saved: true })
     .populate("note")
     .then(function(data) {
-        console.log(data)
         if (data){        
             res.render('index', {
                 data,
@@ -181,19 +155,14 @@ app.get('/', function (req, res) {
     });
   });
   app.delete("/note/:id", function(req, res) {
-      console.log(req.params.id)
-
-    db.Article.findOneAndUpdate({note: { $in : [req.params.id]} }, { $pull: {note: req.params.id }}, { new: true });
-
-    // db.Article.update( {note: { $in : [req.params.id]} }, { $pull: {note: req.params.id} } )
-
-
-    // db.Article.deleteOne({_id:req.params.id},function (err) {
-    //   if (err){
-    //     return res.status(404).end();
-    //   }
-    //   return res.status(200).end();
-    // });
+    db.Article.findOneAndUpdate({note: { $in : [req.params.id]} }, { $pull: {note: req.params.id }}, { new: true })
+    .populate("note")
+    .then(function(data){
+        return res.status(200).end();
+    })
+    .catch(function (err){
+        res.json(err);
+    })
   });
   
 }
